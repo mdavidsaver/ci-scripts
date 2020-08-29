@@ -948,12 +948,12 @@ PERL = C:/Strawberry/perl/bin/perl -CSD'''
         fold_end('install.homebrew', 'Installing Homebrew packages')
 
     if ci['os'] == 'linux' and 'RTEMS' in os.environ:
-        tar_name = 'i386-rtems{0}-trusty-20171203-{0}.tar.bz2'.format(os.environ['RTEMS'])
+        tar_name = 'i386-rtems{0}-bionic-20200829-{0}.tar.bz2'.format(os.environ['RTEMS'])
         print('Downloading RTEMS {0} cross compiler: {1}'
               .format(os.environ['RTEMS'], tar_name))
         sys.stdout.flush()
         sp.check_call(['curl', '-fsSL', '--retry', '3', '-o', tar_name,
-                       'https://github.com/mdavidsaver/rsb/releases/download/20171203-{0}/{1}'
+                       'https://github.com/mdavidsaver/rsb/releases/download/20200829/{1}'
                       .format(os.environ['RTEMS'], tar_name)],
                       cwd=toolsdir)
         sudo_prefix = []
