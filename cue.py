@@ -932,6 +932,9 @@ PERL = C:/Strawberry/perl/bin/perl -CSD'''
             sudo_prefix = ['sudo']
         sp.check_call(sudo_prefix + ['tar', '-C', '/', '-xmj', '-f', os.path.join(toolsdir, tar_name)])
         os.remove(os.path.join(toolsdir, tar_name))
+        if os.environ['RTEMS'] == '4.10': # For 4.10 remove dummy.o out of librtemscpu.a
+            lib_name = os.path.join(rtemsdir, 'i386-rtems4.10','pc686','librtemscpu.a') # Preliminary, hijack 386 bsp with 686
+            sp.check_call(sudo_prefix + [os.path.join(rtemsdir, 'bin','i386-rtems4.10-ar'), 'dv', lib_name, 'dummy.o'])
 
     setup_for_build(args)
 
