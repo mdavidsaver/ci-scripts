@@ -862,21 +862,26 @@ CROSS_COMPILER_TARGET_ARCHS += windows-x64-mingw''')
             # Cross compilation on Linux to RTEMS  (set RTEMS to version "4.9", "4.10")
             # requires qemu, bison, flex, texinfo, install-info
             if 'RTEMS' in os.environ:
-                print('Cross compiler RTEMS{0} @ pc386',format(os.environ['RTEMS']))
+                if 'RTEMS_TARGET' in os.environ:
+                    rtems_target = os.environ['RTEMS_TARGET']
+                elif os.path.exists(os.path.join(places['EPICS_BASE'], 'configure', 'os',
+                                               'CONFIG.Common.RTEMS-pc386-qemu')):
+                    # Base 3.15 doesn't have -qemu target architecture
+                    rtems_target = 'RTEMS-pc386-qemu'
+                else:
+                    rtems_target = 'RTEMS-pc386'
+
+                print('Cross compiler RTEMS{0} @ {1}'.format(os.environ['RTEMS'], rtems_target))
                 with open(os.path.join(places['EPICS_BASE'], 'configure', 'os',
                                        'CONFIG_SITE.Common.RTEMS'), 'a') as f:
                     f.write('''
 RTEMS_VERSION={0}
 RTEMS_BASE={1}'''.format(os.environ['RTEMS'], rtemsdir))
 
-                # Base 3.15 doesn't have -qemu target architecture
-                qemu_suffix = ''
-                if os.path.exists(os.path.join(places['EPICS_BASE'], 'configure', 'os',
-                                               'CONFIG.Common.RTEMS-pc386-qemu')):
-                    qemu_suffix = '-qemu'
                 with open(os.path.join(places['EPICS_BASE'], 'configure', 'CONFIG_SITE'), 'a') as f:
                     f.write('''
-CROSS_COMPILER_TARGET_ARCHS += RTEMS-pc386{0}'''.format(qemu_suffix))
+CROSS_COMPILER_TARGET_ARCHS += {0}
+'''.format(rtems_target))
 
         host_ccmplr_name = re.sub(r'^([a-zA-Z][^-]*(-[a-zA-Z][^-]*)*)+(-[0-9.]|)$', r'\1', ci['compiler'])
         host_cmplr_ver_suffix = re.sub(r'^([a-zA-Z][^-]*(-[a-zA-Z][^-]*)*)+(-[0-9.]|)$', r'\3', ci['compiler'])
